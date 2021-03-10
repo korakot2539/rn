@@ -1,0 +1,58 @@
+import React, { Component } from 'react'
+import { Text, StyleSheet, View, SafeAreaView, Alert, Button } from 'react-native'
+import {createCrawerNavigator, createDrawerNavigator} from "@react-navigation/drawer"
+import {NavigationContainer} from "@react-navigation/native"
+import { create } from 'react-test-renderer';
+
+function HomeScreen({navigation}){
+  return(
+    <View style={styles.drawerStyle}>
+      <Button
+        onPress={()=>navigation.navigate("Notifigation")}
+        title="Go to notification"  
+      />
+    </View>
+
+  );
+}
+
+function Notification({navigation}){
+  return(
+    <View style={styles.drawerStyle}>
+      <Button
+        onPress={()=>navigation.goBack()}
+        title="Go back to home"  
+      />
+    </View>
+
+  );
+}
+
+const Drawer = createDrawerNavigator();
+
+const App =()=>{
+    return (
+      <NavigationContainer>
+      <Drawer.Navigator initialRouteName="HomeScreen">
+        <Drawer.Screen 
+          name="HomeScreen" 
+          component={HomeScreen}
+        />
+        <Drawer.Screen 
+          name="Notification" 
+          component={Notification}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer>
+    );
+}
+
+export default App;
+
+const styles = StyleSheet.create({
+  drawerStyle:{
+    flex:1,
+    alignItems:"center",
+    justifyContent:"center"
+  }
+})

@@ -1,0 +1,91 @@
+import React, { Component } from 'react'
+import { Text, StyleSheet, View, SectionList, TouchableNativeFeedbackBase, Alert } from 'react-native'
+
+export default class App extends Component {
+
+  renderSeparator = () =>{
+    return(
+      <View
+        style={{
+            height:1,
+            width:"100%",
+            backgroundColor:"#000000"
+        }}
+      />
+    );
+  };
+
+  getListViewItem = ({item}) =>{
+    Alert.alert(item,item);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <SectionList
+          sections = {[
+          {
+            title: 'A',
+            data: ['ALTERED', 
+              'ABBY', 
+              'ACTION U.S.A.', 
+              'AMUCK', 
+              'ANGUISH'
+            ],
+          },
+          {
+            title: 'B',
+            data: [
+              'BEST MEN',
+              'BEYOND JUSTICE',
+              'BLACK GUNN',
+              'BLOOD RANCH',
+              'BEASTIES',
+            ],
+          },
+          {
+            title: 'C',
+            data: [
+              'CARTEL',
+              'CASTLE OF EVIL',
+              'CHANCE',
+              'COP GAME',
+              'CROSS FIRE',
+            ],
+          }
+          ]}
+          renderItem = {({item})=>(
+            <Text style={styles.item} onPress={this.getListViewItem.bind(this.item)}>
+              {item}
+            </Text>
+          )}
+          renderSectionHeader={({section})=>(
+            <Text style={styles.sectionHeader}>{section.title}</Text>
+          )}
+          keyExtractor={(item,index)=>index}
+          ItemSeparatorComponent = {this.renderSeparator}
+        />
+      </View>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    backgroundColor:"#5ead97",
+  },
+  sectionHeader:{
+    paddingVertical:2,
+    paddingHorizontal:10,
+    fontSize:22,
+    fontWeight:"bold",
+    color:"#ffffff",
+    backgroundColor:"#8fb1aa"
+  },
+  item:{
+    padding:10,
+    fontSize:18,
+    height:44
+  }
+})

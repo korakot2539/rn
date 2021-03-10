@@ -1,0 +1,49 @@
+import React,{useState} from 'react'
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import {WebView} from 'react-native-webview'
+
+const ActivityIndicatorElement =()=>{
+  return (
+    <view style={styles.ActivityIndicatorStyle}>
+      <ActivityIndicator 
+        color = "#009688"
+        size = "large"
+      />
+    </view>
+  )
+}
+
+const App = () => {
+  const[visible,setVisible] = useState(false);
+  return (
+    <SafeAreaView style={{flex:1}}>
+      <View style={styles.container}>
+        <WebView
+        style = {{flex:1}}
+        source={{uri:"https://www.tni.ac.th"}}
+        javaScriptEnabled = {true}
+        domStorageEnableed = {true}
+        onLoadStart = {()=>setVisible(true)}
+        onLoad ={()=>setVisible(false)}
+        />
+        {visible?<ActivityIndicatorElement/>:null}
+      </View>
+    </SafeAreaView>
+    
+  )
+}
+
+export default App
+
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    backgroundColor:"#f5fcff"
+  },
+  ActivityIndicatorStyle:{
+    flex:1,
+    // position:"absolute",
+    margin:"auto",
+    justifyContent:"center"
+  }
+});

@@ -1,0 +1,199 @@
+import React, { Component } from 'react'
+import { Text, StyleSheet, View, SafeAreaView, Alert, Button, TouchableOpacityBase } from 'react-native'
+import {createDrawerNavigator,DrawerContent,DrawerItemList,DrawerItem, DrawerContentScrollView} from "@react-navigation/drawer"
+import {createStackNavigator} from "@react-navigation/Stack"
+import {NavigationContainer, StackRouter} from "@react-navigation/native"
+
+import FirstPage from "./pages/FirstPage";
+import SecondPage from "./pages/App13.SecondPage.txt";
+import ThirdPage from "./pages/App13.ThirdPage.txt";
+import LandingPage from "./pages/LandingPage";
+
+const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
+
+function HomeScreen({navigation}){
+  return(
+    <View style={styles.drawerStyle}>
+      <Button
+        onPress={()=>navigation.navigate("Notifigation")}
+        title="Go to notification"  
+      />
+    </View>
+
+  );
+}
+
+function Notification({navigation}){
+  return(
+    <View style={styles.drawerStyle}>
+      <Button
+        onPress={()=>navigation.goBack()}
+        title="Go back to home"  
+      />
+    </View>
+
+  );
+}
+
+const NavigationDrawerStructur = (props) =>{
+  const toggleDrawer = ()=>{
+    //props to open close drawer
+    props.navigationProps.toggleDrawer();
+  }
+  return(
+    <View style={{flexDirection:"row"}}>
+      <TouchableOpacity 
+        onPress={()=>toggleDrawer()}
+      >
+        <Image
+          source = {require("./asset/drawerWhite.png")}
+          style = {{width:25,height:25,marginLeft:5}}
+        />
+      </TouchableOpacity>
+    </View>
+
+  );
+}
+
+function firstScreenStack({navigation,route}){
+  return(
+    <Stack.Navigator initialRouteName="FirstPage">
+      <Stack.Screen
+        name="FirstPage"
+        component={FirstPage}
+        initialParams={route.params}
+        option={{
+          title = "First Page",
+          headerLeft:()=><NavigationDrawerStructur navigationProps={navigation}/>,
+          headerStyle:{
+            backgroundColor:"#a5b59c"
+          },
+          headerTintColor:"white",
+          headerTintStyle:{fontWeight:"bold"}
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function secondScreenStack({navigation}){
+  return(
+    <Stack.Navigator initialRouteName="SecondPage">
+      <Stack.Screen
+        name="SecondPage"
+        component={SecondPage}
+        option={{
+          title = "Second Page",
+          headerLeft:()=><NavigationDrawerStructur navigationProps={navigation}/>,
+          headerStyle:{
+            backgroundColor:"#a5b59c"
+          },
+          headerTintColor:"white",
+          headerTintStyle:{fontWeight:"bold"}
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function thirdScreenStack({navigation}){
+  return(
+    <Stack.Navigator initialRouteName="ThirdPage">
+      <Stack.Screen
+        name="ThirdPage"
+        component={ThirdPage}
+        option={{
+          title = "Third Page",
+          headerLeft:()=><NavigationDrawerStructur navigationProps={navigation}/>,
+          headerStyle:{
+            backgroundColor:"#a5b59c"
+          },
+          headerTintColor:"white",
+          headerTintStyle:{fontWeight:"bold"}
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+const drawerStack = ({route})=>{
+  return(
+    <Drawer.Navigator
+      drawerContentOptions = {{
+        activeTintColor:"#e91e63",
+      }}
+      drawerContent={(props)=>{
+          return(
+            <DrawerContentScrollView {...props}>
+              <DrawerItemList {...props}/>
+              
+              {
+                route.params.userType==="user"?
+                (
+                  <DrawerItem
+                    label = {({color})=>(
+                      <Text style={{color}}>
+                        Change Access to Guest
+                      </Text>
+                    )}
+                    onPress ={()=>{
+                      props.navigation.navigate("drawerStack",{userType:"guest"})
+
+                    }}
+                  />
+                )
+                :null
+              }
+            </DrawerContentScrollView>
+          );
+      }}
+    >
+      <Drawer.Screen 
+        name="FirstPage" 
+        component={firstScreenStack}
+        option = {{drawerLabel:"First page Option"}}
+        initialParams={{userType:route.params.userType}}
+      />
+      {
+      route.params.userType === "user"?
+      (
+        <>
+            <Drawer.Screen 
+              name="SecondPage" 
+              component={secondScreenStack}
+              option = {{drawerLabel:"Second page Option"}}
+            />
+            <Drawer.Screen 
+              name="ThirdPage" 
+              component={thirdScreenStack}
+              option = {{drawerLabel:"Third page Option"}}
+            />
+        </>
+      )
+      :null
+    }
+    </Drawer.Navigator>
+  )
+}
+
+const App =()=>{
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{headerShown:false}}>
+          <Stack.Screen name="LandingPage" component={LandingPage}/>
+          <Stack.Screen name="drawerStack" component={drawerStack}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+}
+
+export default App;
+
+const styles = StyleSheet.create({
+  drawerStyle:{
+    flex:1,
+    alignItems:"center",
+    justifyContent:"center"
+  }
+})

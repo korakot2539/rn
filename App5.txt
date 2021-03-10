@@ -1,0 +1,139 @@
+import React, { Component } from 'react'
+import { Text, 
+  StyleSheet, 
+  View, 
+  TouchableOpacity,
+  ActionSheetIOS,
+  ActivityIndicator,
+  FlatList
+} from 'react-native'
+
+export default class App extends Component {
+
+  constructor(){
+    super();
+    this.state={
+      loading:true,
+      serverData:[],
+      fetching_from_server:false,
+    }
+    this.offset=1;
+  }
+
+  componentDidMount(){
+    fetch('https://aboutreact.herokuapp.com/getpost.php?offset='+this.offset)
+    .then(
+      response =>response.json()
+    )
+    .then(responseJson=>{
+      this.offset=this.offset+1;
+      this.setState({
+        serverData:[...this.state.serverData,...responseJson.results],
+        loading:false
+      });
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+  }
+
+  loadMoreData=()=>{
+    this.setState({fetching_from_server:true},()=>{
+      fetch('https://aboutreact.herokuapp.com/getpost.php?offset='+this.offset)
+      .then(
+        response =>response.json()
+      )
+      .then(responseJson=>{
+        this.offset=this.offset+1;
+        this.setState({
+          serverData:[...this.state.serverData,...responseJson.results],
+          loading:false
+        });
+      })
+      .catch(error =>{
+        console.log(error);
+      })
+    });
+  }
+
+  renderFooter(){
+    return(
+      <View style={styles.footer}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={this.loadMoreData}
+          style={styles.loadMoreBtn}
+        >
+          <Text style={styles.btnText}>Load More</Text>
+          {this.state.fetching_from_server??<ActivityIndicator color="white" style={{marginLeft:10}}/>}
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        {this.state.loading?
+          (
+            <ActivityIndicator size="large"/>
+          ):(
+            <FlatList
+              style={{width:"100%"}}
+              data={this.state.serverData}
+              keyExtractor={(item,index)=>index}
+              renderItem={({item,index})=>(
+                <View style={styles.item}>
+                  <Text style={styles.text}>
+                    {item.id}{"."}{item.title.toUppperCase()}
+                  </Text>
+                </View>
+              )}
+              ItemSeparatorComponent={()=><View style={styles.separator}/>}
+              ListFooterComponent = {this.renderFooter.bind(this)}
+            />
+          )
+        }
+      </View>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    justifyContent:"center",
+    alignItems:"center",
+    paddingUop:30
+  },
+  item:{
+    padding:10
+  },
+  separator:{
+    height:0.5,
+    backgroundColor:"rgba(0,0,0,0.4)"
+  },
+  text:{
+    fontSize:15,
+    color:"black"
+  },
+  footer:{
+    padding:10,
+    justifyContent:"center",
+    alignItems:"center",
+    flexDirection:"row"
+  },
+  loadMoreBtn:{
+    padding10,
+    backgroundColor:"#800000",
+    borderRadius:4,
+    flexDirection:"row",
+    justifyContent:"center",
+    alignItems:"center"
+  },
+  btnText:{
+    color:"white",
+    fontSize:15,
+    textAlign:"center"
+  }
+})
